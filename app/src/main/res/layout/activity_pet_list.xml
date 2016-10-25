@@ -28,7 +28,9 @@
         android:id="@+id/petImageView"
         android:layout_gravity="center_horizontal"
         android:layout_width="150dp"
-        android:layout_height="150dp" />
+        android:layout_height="150dp"
+        android:clickable="true"
+        android:onClick="selectPetImage" />
 
     <Button
         android:text="@string/add_button_text"
