@@ -29,6 +29,8 @@ public class PetListActivity extends AppCompatActivity {
     // Default: none.jpg (R.drawable.none)
     private Uri imageURI;
 
+    private static final int REQUEST_CODE = 573;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +48,6 @@ public class PetListActivity extends AppCompatActivity {
 
         // List of permissions we need to request from the user
         ArrayList<String> permList = new ArrayList<>();
-        int requestCode = 573;
 
         // Do we have permission to camera? Reading external storage? Writing to external storage?
         // If not, add permissions to permList.
@@ -68,7 +69,7 @@ public class PetListActivity extends AppCompatActivity {
 
 
             //Request permissions from user
-            ActivityCompat.requestPermissions(this, permList.toArray(args), requestCode);
+            ActivityCompat.requestPermissions(this, permList.toArray(args), REQUEST_CODE);
         }
 
         // If we have all three permissions, open ImageGallery
@@ -79,11 +80,29 @@ public class PetListActivity extends AppCompatActivity {
             // Use an Intent to launch the gallery and take pictures
             Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(galleryIntent, requestCode);
+            startActivityForResult(galleryIntent, REQUEST_CODE);
         }
         else
             Toast.makeText(this, "Pet Protector requires camera and external storage permissions!", Toast.LENGTH_LONG).show();
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // This is code to handle when the user closes the gallery,
+        // either by selecting an image or pressing the back button.
+
+        // The Intent data is the URI selected from the image gallery.
+
+        // Did the user select an image?
+        if (data != null && requestCode == REQUEST_CODE && resultCode == RESULT_OK)
+        {
+            // Set the data to the URI received
+            imageURI = data.getData();
+            petImageView.setImageURI(imageURI);
+        }
     }
 
     public static Uri getUriToResource(@NonNull Context context, @AnyRes int resId) throws Resources.NotFoundException {
